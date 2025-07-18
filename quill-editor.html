@@ -16,30 +16,22 @@
       width: 100%;
       max-width: 1020px;
       margin: 12px auto;
-      box-shadow: 0 12px 12px rgba(0,0,0,0.08);
       border: 2px solid #ccc;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      border-bottom-left-radius: 12px;
-      border-bottom-right-radius: 12px;
-      overflow: hidden; /* importante para evitar sobresalir bordes */
+      border-radius: 10px;
+      box-shadow: 0 12px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      background: #fff;
     }
 
     #toolbar-container {
       background: #f9f9f9;
       padding: 8px;
-      border: 2px solid #ddd;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
     }
 
     #editor-container {
       height: 400px;
       background: #fff;
       padding: 12px;
-      border: 2px solid #ddd;
-      border-bottom-left-radius: 12px;
-      border-bottom-right-radius: 12px;
     }
 
     .ql-container {
@@ -98,7 +90,7 @@
       theme: 'snow'
     });
 
-    // Envía contenido al iframe parent si estás trabajando con Wix
+    // Comunicación con iframe parent (Wix)
     window.addEventListener("message", (event) => {
       if (event.data === "getEditorContent") {
         const html = quill.root.innerHTML;
