@@ -3,16 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    body { font-family: sans-serif; padding: 10px; margin: 0; }
-    input[type="text"] {
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;         /* 🧽 Oculta scrollbars */
+      height: 100%;
       width: 100%;
-      padding: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+    }
+
+    input[type="text"] {
+      width: 90%;                /* 🧩 Ajustable: 90% del iframe */
+      padding: 8px 12px;
       font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
-  <input type="text" id="searchInput" placeholder="Search in forum...">
+  <input type="text" id="searchInput" placeholder="🔍 Search in forum...">
   <script>
     const input = document.getElementById("searchInput");
     input.addEventListener("input", () => {
