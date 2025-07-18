@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: sans-serif; padding: 10px; margin: 0; }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="searchInput" placeholder="Search in forum...">
+  <script>
+    const input = document.getElementById("searchInput");
+    input.addEventListener("input", () => {
+      parent.postMessage({ search: input.value }, "*");
+    });
+  </script>
+</body>
+</html>
