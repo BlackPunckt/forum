@@ -15,11 +15,11 @@
       padding: 0;
       background: transparent;
       font-family: 'Segoe UI', sans-serif;
-      overflow-x: hidden; /* Evita scroll lateral */
+      overflow-x: hidden;
     }
 
     #editor-wrapper {
-      width: 95vw; /* Más responsivo que 100% */
+      width: 95vw;
       max-width: 1020px;
       margin: 20px auto;
       border: 2px solid #ccc;
@@ -35,7 +35,7 @@
     }
 
     #editor-container {
-      height: 580px; /* Más alto */
+      height: 580px;
       background: #fff;
       padding: 12px;
     }
@@ -95,11 +95,42 @@
       theme: 'snow'
     });
 
-    // Comunicación con Wix o iframe
+    // Palabras bloqueadas (inglés, español, francés, alemán, ruso, italiano)
+    const BLOCKED_WORDS = [
+      // Inglés
+      "fuck", "shit", "bitch", "asshole", "bastard", "damn", "hell", "dick",
+      // Español
+      "puta", "puto", "pendejo", "cabron", "mierda", "coño", "joder", "chingar",
+      // Francés
+      "putain", "merde", "salope", "connard", "enculé",
+      // Alemán
+      "scheiße", "fotze", "arschloch", "hure", "verdammt",
+      // Ruso
+      "сука", "блядь", "чёрт", "пизда", "нахуй",
+      // Italiano
+      "cazzo", "stronzo", "merda", "puttana", "vaffanculo"
+    ];
+
+    // Comunicación con Wix
     window.addEventListener("message", (event) => {
       if (event.data === "getEditorContent") {
-        const html = quill.root.innerHTML;
-        parent.postMessage({ type: "editorContent", content: html }, "*");
+        const html = quill.root.innerHTML.toLowerCase();
+
+        // Revisión de lenguaje ofensivo
+        const containsBadWords = BLOCKED_WORDS.some(word => html.includes(word));
+
+        if (containsBadWords) {
+          parent.postMessage({
+            type: "validationError",
+            reason: "badLanguage",
+            message: "Your post contains inappropriate language."
+          }, "*");
+        } else {
+          parent.postMessage({
+            type: "editorContent",
+            content: quill.root.innerHTML
+          }, "*");
+        }
       }
     });
   </script>
