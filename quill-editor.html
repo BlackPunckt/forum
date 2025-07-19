@@ -88,6 +88,28 @@
 
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script>
+    const BLOCKED_WORDS = [
+      "damn", "hell", "shit", "fuck", "bitch", "mierda", "puta", "carajo", "imbécil", "concha", "idiota",
+      "merde", "salope", "putain", "connard",
+      "scheiße", "arschloch", "hurensohn",
+      "stronzo", "cazzo", "vaffanculo", "merda",
+      "сука", "блядь", "черт", "дерьмо"
+    ];
+
+    const warningMessages = {
+      en: "Your content contains inappropriate language.",
+      es: "El contenido contiene lenguaje inapropiado.",
+      fr: "Le contenu contient un langage inapproprié.",
+      de: "Der Inhalt enthält unangemessene Sprache.",
+      ru: "Содержимое содержит неприемлемую лексику.",
+      it: "Il contenuto contiene un linguaggio inappropriato."
+    };
+
+    function getUserLanguage() {
+      const lang = navigator.language || navigator.userLanguage || "en";
+      return lang.split("-")[0];
+    }
+
     const quill = new Quill('#editor-container', {
       modules: {
         toolbar: '#toolbar-container'
@@ -95,40 +117,26 @@
       theme: 'snow'
     });
 
-    // Palabras bloqueadas (inglés, español, francés, alemán, ruso, italiano)
-    const BLOCKED_WORDS = [
-      // Inglés
-      "fuck", "shit", "bitch", "asshole", "bastard", "damn", "hell", "dick",
-      // Español
-      "puta", "puto", "pendejo", "cabron", "mierda", "coño", "joder", "chingar",
-      // Francés
-      "putain", "merde", "salope", "connard", "enculé",
-      // Alemán
-      "scheiße", "fotze", "arschloch", "hure", "verdammt",
-      // Ruso
-      "сука", "блядь", "чёрт", "пизда", "нахуй",
-      // Italiano
-      "cazzo", "stronzo", "merda", "puttana", "vaffanculo"
-    ];
-
-    // Comunicación con Wix
     window.addEventListener("message", (event) => {
       if (event.data === "getEditorContent") {
-        const html = quill.root.innerHTML.toLowerCase();
+        const html = quill.root.innerHTML || "";
+        const contentLower = html.toLowerCase();
+        const containsBadWords = BLOCKED_WORDS.some(word =>
+          contentLower.includes(word)
+        );
 
-        // Revisión de lenguaje ofensivo
-        const containsBadWords = BLOCKED_WORDS.some(word => html.includes(word));
+        const lang = getUserLanguage();
+        const message = warningMessages[lang] || warningMessages["en"];
 
         if (containsBadWords) {
           parent.postMessage({
             type: "validationError",
-            reason: "badLanguage",
-            message: "Your post contains inappropriate language."
+            message
           }, "*");
         } else {
           parent.postMessage({
             type: "editorContent",
-            content: quill.root.innerHTML
+            content: html
           }, "*");
         }
       }
